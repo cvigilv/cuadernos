@@ -165,7 +165,35 @@ Table: Candidatos interesantes para SARS-CoV-2 obtenidos a partir de las predicc
 
 ![Esquema resumen de NBI \label{Esquema NBI}](/home/cvigilv/uni/clases/BIO296F/Figuras/NBI.png)
 
-## 2020.06.09
+## 2020.06.15
 ### ¿Qué hay que hacer?
-- [ ] Probar implementación de NBI en Python
-- [ ] 
+- [X] Preguntarle a Andreas acerca de la implementación de la validación cruzada
+- [ ] ~~Implementar validación cruzada en Julia~~
+- [ ] ~~Implementar métricas en Julia~~
+- [ ] ~~Correr predicciones para el set de datos _Nuclear Receptor_~~
+
+### ¿Qué se hizo?
+- Se genero un set de datos de pruebas para probar el funcionamiento de NBI para ambas implementaciones del algoritmo (Julia y Python). Se corroboró que ambas implementaciones dan el mismo resultado, por ende, se asume que estan corriendo igual.
+- _Failure..._ No pude reimplementar la validación cruzada de Alaimo et al. (2013) en 1 día, así que me atrasé. No obstante, fui capaz de generar una versión de AUC(L).
+
+
+## 2020.06.17
+### ¿Qué hay que hacer?
+- [ ] ~~Implementar *splitting* de los datos en implementación de Python~~
+- [ ] ~~Implementar métricas planteadas en Alaimo et al. (2013).~~
+- [ ] ~~Correr predicciones para el set de datos *Nuclear Receptor*~~
+
+### ¿Qué se hizo?
+- Se habló con Andreas para ver el tema de la validación cruzada, los problemas que esta presentaba y el estado actual de la implementación. Se concluyó que la haríamos de la siguiente manera:
+	+ *Splitting* en 10 grupos, donde el 10% corresponde al set de prueba y el 90% restante al set de entrenamiento.
+	+ En el set de prueba no pueden quedar ligandos aislados, por lo que al momento de hacer la predicción se debe revisar si es que al momento de eliminar la interacción proteína-ligando del grupo esta introduciría un nodo aislado. De ser así no se elimina la unión y se guarda en una lista este caso, para que se pueda tomar en consideración al momento de calcular lo estadígrafos.
+	+ Solo se calculan los estadígrafps de $e_P(L)$ y $e_R(L)$ para los casos donde se eliminó al menos 1 unión proteína-ligando, de lo contrario se ignoran en el cálculo.
+- El objetivo en este minuto es tratar de obtener los números lo más cercanos a aquellos que se encuentran publicados, si no se puede lograr eso se procede a hacer la validación cruzada de la manera que propuso Andreas (no la tengo escrita, por lo que hay que volver a preuntarle).
+
+## 2020.06.22
+### ¿Qué hay que hacer?
+- [ ] Implementar *splitting* de los datos en implementación de Python
+
+### ¿Qué se hizo?
+- Se implementó el *splitting* de los datos en Python, comparándolo con la imlpementación de Julia (Dan igual, pero es **significativamente** más lento que Julia). Faltaría implementar el *output* a un archivo de texto, utilizando el formato clásico que ocupamos en el lab.
+	+ Una observación interesante de la implementación paralelizada en Python es que a pesar de que las pruebas las estoy corriendo en 4 cores, esta es más lenta que la implementación de Julia en 1 core. Tengo que aprender a utilziar *multithreading* o *multiprocessing* en Julia, porque es **significativamente** más rápido al momento de hacer cálculos matemáticos.
